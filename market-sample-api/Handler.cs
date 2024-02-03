@@ -26,6 +26,9 @@ namespace Agava.MarketSampleApi
                 BaseRequest requestHandler = request.method switch
                 {
                     "LOGIN" => new LoginRequest(tableClient, request),
+                    "REGISTRATION" => new RegistrationRequest(tableClient, request),
+                    "REFRESH" => new RefreshRequest(tableClient, request),
+                    "SAMPLE_AUTH" => new SampleAuthRequest(tableClient, request),
                     _ => throw new InvalidOperationException($"Method {request.method} not found")
                 };
 
