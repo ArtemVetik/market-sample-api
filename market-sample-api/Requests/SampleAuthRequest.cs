@@ -14,11 +14,11 @@ namespace Agava.MarketSampleApi
             try
             {
                 var userId = JwtTokenService.Validate(request.access_token, JwtTokenService.TokenType.Access);
-                return new Response((uint)Ydb.Sdk.StatusCode.Success, Ydb.Sdk.StatusCode.Success.ToString(), userId);
+                return new Response((uint)Ydb.Sdk.StatusCode.Success, Ydb.Sdk.StatusCode.Success.ToString(), userId, false);
             }
             catch (Exception exception)
             {
-                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), exception.Message);
+                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), exception.Message, false);
             }
 
         }

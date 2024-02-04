@@ -38,17 +38,17 @@ namespace Agava.MarketSampleApi
             });
 
             if (response.Status.IsSuccess == false)
-                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty, false);
 
             var resultRows = ((ExecuteDataQueryResponse)response).Result.ResultSets[0].Rows;
 
             if (resultRows.Count == 0)
-                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), "Invalid credentials");
+                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), "Invalid credentials", false);
 
             var userId = resultRows[0]["user_id"].GetOptionalString();
 
-            var accessToken = JwtTokenService.Create(TimeSpan.FromMinutes(1), Encoding.UTF8.GetString(userId), JwtTokenService.TokenType.Access);
-            var refreshToken = JwtTokenService.Create(TimeSpan.FromMinutes(5), Encoding.UTF8.GetString(userId), JwtTokenService.TokenType.Refresh);
+            var accessToken = JwtTokenService.Create(TimeSpan.FromMinutes(5), Encoding.UTF8.GetString(userId), JwtTokenService.TokenType.Access);
+            var refreshToken = JwtTokenService.Create(TimeSpan.FromMinutes(15), Encoding.UTF8.GetString(userId), JwtTokenService.TokenType.Refresh);
 
             response = await client.SessionExec(async session =>
             {
@@ -72,7 +72,7 @@ namespace Agava.MarketSampleApi
             });
 
             if (response.Status.IsSuccess == false)
-                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty, false);
 
             var responseBody = new
             {
@@ -80,7 +80,8 @@ namespace Agava.MarketSampleApi
                 refresh = refreshToken
             };
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), JsonConvert.SerializeObject(responseBody));
+            var jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseBody));
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Convert.ToBase64String(jsonBytes), true);
         }
     }
 }

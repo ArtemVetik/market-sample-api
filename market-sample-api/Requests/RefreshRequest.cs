@@ -19,7 +19,7 @@ namespace Agava.MarketSampleApi
             }
             catch (Exception exception)
             {
-                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), exception.Message);
+                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), exception.Message, false);
             }
 
             var response = await client.SessionExec(async session =>
@@ -43,14 +43,14 @@ namespace Agava.MarketSampleApi
             });
 
             if (response.Status.IsSuccess == false)
-                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty, false);
 
             var resultRows = ((ExecuteDataQueryResponse)response).Result.ResultSets[0].Rows;
 
             var dbToken = resultRows[0]["refresh_token"].GetOptionalString();
 
             if (Encoding.UTF8.GetString(dbToken) != request.body)
-                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), "Invalid token");
+                return new Response((uint)StatusCode.ValidationError, StatusCode.ValidationError.ToString(), "Invalid token", false);
 
             var responseBody = new
             {
@@ -58,7 +58,8 @@ namespace Agava.MarketSampleApi
                 refresh = request.body
             };
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), JsonConvert.SerializeObject(responseBody));
+            var jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(responseBody));
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Convert.ToBase64String(jsonBytes), true);
         }
     }
 }
