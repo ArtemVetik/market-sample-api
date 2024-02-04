@@ -37,7 +37,7 @@ namespace Agava.MarketSampleApi
                 );
             });
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty, false);
         }
     }
 }

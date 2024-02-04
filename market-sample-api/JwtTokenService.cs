@@ -7,7 +7,7 @@ namespace Agava.MarketSampleApi
 {
     internal static class JwtTokenService
     {
-        private static readonly string Secret = "my-secter-secret-secret-secret-key";
+        private static readonly string Secret = "my-secret-secret-secret-secret-key";
         private static readonly string SecurityAlgorithm = SecurityAlgorithms.HmacSha256Signature;
 
         public static string Create(TimeSpan time, string userId, TokenType tokenType)
@@ -44,7 +44,7 @@ namespace Agava.MarketSampleApi
             var type = jwtToken.Claims.First(x => x.Type == "type").Value;
 
             if (tokenType.ToString() != type)
-                throw new Exception("Validate error");
+                throw new Exception("Validation error");
 
             return jwtToken.Claims.First(x => x.Type == "id").Value;
         }

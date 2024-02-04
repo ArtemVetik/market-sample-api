@@ -29,7 +29,8 @@ namespace Agava.MarketSampleApi
                     "REGISTRATION" => new RegistrationRequest(tableClient, request),
                     "REFRESH" => new RefreshRequest(tableClient, request),
                     "SAMPLE_AUTH" => new SampleAuthRequest(tableClient, request),
-                    _ => throw new InvalidOperationException($"Method {request.method} not found")
+                    _ => new ErrorRequest(tableClient, request,
+                        new Response((uint)StatusCode.NotFound, StatusCode.NotFound.ToString(), $"Method {request.method} not found", false)),
                 };
 
                 return await requestHandler.Handle();
